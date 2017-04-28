@@ -31,9 +31,9 @@ class Card():
             elif decision == 'y':
                 for i,k in enumerate(arr_players):
                     print(str(i)+"-"+k.name)
-                player = int(input("Which player would like to play the nope card?"))
-                while (player < 0 or player > len(arr_players)) and players == turn_order:
-                    player = int*input("Which player would like to play the nope card?")
+                player = input("Which player would like to play the nope card?")
+                while (player < 0 or player > len(arr_players)) and player == turn_order:
+                    player = int(input("Which player would like to play the nope card?"))
                 arr_players[player].hand.remove(cards[11])
                 return True
         return False

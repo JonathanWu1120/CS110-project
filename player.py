@@ -37,7 +37,11 @@ class Player:
                 self.hand.append(played_card)
                 return True,False
         else:
-            if played_card == cards[2]:
+            if played_card == card[1]:
+                print("Defuse can only be played after an exploding kitten")
+                self.hand.append(played_card)
+                return True,False
+            elif played_card == cards[2]:
                 if played_card.nope(arr_players,cards,turn_order):
                     return  True,False
                 return played_card.skip(attack,pick)
