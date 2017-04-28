@@ -54,6 +54,18 @@ def main():
     for i,k in enumerate(arr_players):
         print(k.print_name())
         arr_players[i].show_hand()
-    loops.main_loop(decker,cards,arr_players)
+    turn_order = 0
+    while len(arr_players) != 1:
+        death,attack = loops.choice_loop(decker,cards,arr_players,turn_order)
+        if death == None:
+            arr_players.pop(turn_order)
+            turn_order -= 1
+            turn_order = loops.turn_rollover(turn_order,len(arr_players))
+        if attack:
+            turn_order = loops.turn_rollover(turn_order,len(arr_players))
+            turn_order += 1
+            death,attack = loops.choice_loop(decker,cards,arr_players,turn_order)
+        turn_order += 1
+        turn_order = loops.turn_rollover(turn_order,len(arr_players))
 
 main()

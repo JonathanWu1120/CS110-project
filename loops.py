@@ -29,7 +29,7 @@ def exploding_kitten(player,cards,decker):
             decision = input("Would you like to play your defuse? (y/n): ")
         if decision == "n":
             print("You have died! :(")
-            return True,False
+            return None,False
         elif decision == "y":
             player.hand.pop(player.hand.index(cards[1]))
             print("You have played a defuse\n There are currently",decker.cards_left() + 1,"cards left in the deck")
@@ -88,17 +88,18 @@ def turn_rollover(turn_order,number_players):
         turn_order = number_players
     return turn_order
 
-def main_loop(decker,cards,arr_players):
-    turn_order = 0
-    while len(arr_players) != 1:
-        death,attack = choice_loop(decker,cards,arr_players,turn_order)
-        if death == True:
-            arr_players.pop(turn_order)
-            turn_order -= 1
-            turn_order = turn_rollover(turn_order,len(arr_players))
-        if attack:
-            turn_order = turn_rollover(turn_order,len(arr_players))
-            turn_order += 1
-            death,attack = choice_loop(decker,cards,arr_players,turn_order)
-        turn_order += 1
-        turn_order = turn_rollover(turn_order,len(arr_players))
+# def main_loop(decker,cards,arr_players):
+#     turn_order = 0
+#     while len(arr_players) != 1:
+#         death,attack = choice_loop(decker,cards,arr_players,turn_order)
+#         if death == True:
+#             print("Yeah")
+#             arr_players.pop(turn_order)
+#             turn_order -= 1
+#             turn_order = turn_rollover(turn_order,len(arr_players))
+#         if attack:
+#             turn_order = turn_rollover(turn_order,len(arr_players))
+#             turn_order += 1
+#             death,attack = choice_loop(decker,cards,arr_players,turn_order)
+#         turn_order += 1
+#         turn_order = turn_rollover(turn_order,len(arr_players))
