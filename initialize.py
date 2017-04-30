@@ -2,9 +2,13 @@ import deck
 import player
 import Card
 import loops
-
+import fuckit
+import gui
     #makes all the cards needed for the game
 def initialize():
+    screen = gui.view()
+    buttons = screen.start_up()
+    num_players = screen.determine_players(buttons)
     exploding_kitten = Card.Card("Exploding Kitten")
     defuse = Card.Card("Defuse")
     skip = Card.Card("Skip")
@@ -29,12 +33,12 @@ def initialize():
     decker.add_card(nope)
     decker.add_card(see_future)
     decker.shuffle()
-    num_players = -1
-    while num_players < 2 or num_players > 5:
-        try:
-            num_players = int(input("Enter the number of players (2-5): "))
-        except ValueError:
-            print("That's not a valid integer.")
+    # num_players = -1
+    # while num_players < 2 or num_players > 5:
+    #     try:
+    #         num_players = int(input("Enter the number of players (2-5): "))
+    #     except ValueError:
+    #         print("That's not a valid integer.")
     arr_players = []
     for i in range(num_players):
         player_name = player.Player(input("Enter the name of player "+str(i+1)+": "))
@@ -46,26 +50,13 @@ def initialize():
     #there is one extra defuse card in the deck
     decker.add_card(defuse)
     decker.shuffle()
-    return decker,arr_players,arr
+    return decker,arr_players,arr,screen
 
 def main():
     #screen = screen.make_screen()
-    decker,arr_players,cards = initialize()
+    decker,arr_players,cards,screen = initialize()
+    screen.game_phase(decker,arr_players,cards)
     for i,k in enumerate(arr_players):
         print(k.print_name())
-        arr_players[i].show_hand()
-    turn_order = 0
-    while len(arr_players) != 1:
-        death,attack = loops.choice_loop(decker,cards,arr_players,turn_order)
-        if death == None:
-            arr_players.pop(turn_order)
-            turn_order -= 1
-            turn_order = loops.turn_rollover(turn_order,len(arr_players))
-        if attack:
-            turn_order = loops.turn_rollover(turn_order,len(arr_players))
-            turn_order += 1
-            death,attack = loops.choice_loop(decker,cards,arr_players,turn_order)
-        turn_order += 1
-        turn_order = loops.turn_rollover(turn_order,len(arr_players))
-
+        k.show_hand()
 main()

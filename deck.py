@@ -37,7 +37,7 @@ class Deck:
         if self.is_empty():
             print("empty deck my guy")
         else:
-            card_drawn = self.deck.pop(len(self.deck)-1)
+            card_drawn = self.deck.pop()
             return card_drawn
     #peek is for seeing the future and altering the future
     def peek(self,card_index):
