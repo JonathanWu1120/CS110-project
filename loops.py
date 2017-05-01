@@ -22,7 +22,6 @@ def choice_loop(decker,cards,arr_players,turn_order):
 
 def exploding_kitten(player,cards,decker):
     print("EXPLODING KITTEN")
-    death = True
     if cards[1] in player.hand:
         decision = input("Would you like to play your defuse? (y/n): ")
         while decision != "n" and decision != "y":
@@ -59,21 +58,21 @@ def choosing_player(arr_players,player):
     recipient = int(input("Select which player you want to take from"))
     while recipient < 0 or recipient > len(arr_players) - 1 or recipient == arr_players.index(player):
         recipient = int(input("Select which player you want to steal from"))
-    return recipient
+    return arr_players[recipient]
 
 def card_stealing(arr_players,recipient):
-    print("This player has ",arr_players[recipient].len_hand()," cards in their hand")
+    print("This player has ",recipient.len_hand()," cards in their hand")
     stolen_card = int(input("Enter which card you want stolen"))
-    while stolen_card > arr_players[recipient].len_hand() or stolen_card < 0:
+    while stolen_card > recipient.len_hand() or stolen_card < 0:
         stolen_card = int(input("Enter which card you want stolen"))
     return stolen_card
 
-def give_card(arr_players,recipient):
+def give_card(recipient):
     recipient.show_hand()
     selected_card = int(input("Which card would you like to give away? "))
-    while selected_card > arr_players[recipient].len_hand() or selected_card < 0:
+    while selected_card > recipient.len_hand() or selected_card < 0:
         selected_card = int(input("Which card would you like to give away?"))
-    return selected_card
+    return recipient.hand[selected_card]
 
 def phase_of_taking(arr_players,player):
     for k,v in enumerate(arr_players):

@@ -1,6 +1,7 @@
 import pygame
-import player
-import pygame.freetype
+import colors
+import os
+import button
 
 class view:
     def __init__(self):
@@ -57,24 +58,20 @@ class view:
         pygame.display.set_caption('Exploding Kittens')
         gameDisplay.fill(white)
         middleDeck = pygame.draw.rect(gameDisplay,black,(350,275,120,168)) #deck icon
-        player_one = pygame.Surface((100,100))     #player1 icon
-        gameDisplay.blit(player_one, ((50,50)))
-        player_two = pygame.Surface((100,100))     #player2 icon
-        gameDisplay.blit(player_two, ((400,50)))
-        player_three = pygame.Surface((100,100))   #player3 icon
-        gameDisplay.blit(player_three, ((772.5,50)))
-        player_four = pygame.Surface((100,100))    #player4 icon
-        gameDisplay.blit(player_four, ((1130,50)))
-        player_five = pygame.Surface((100,100))    #player5 icon current player
-        gameDisplay.blit(player_five, ((100,600)))
-        for i in range(6):
-            card_in_hand_one = pygame.Surface((120,168))
-            gameDisplay.blit(card_in_hand_one, (300+150*i, 531))
-            card_played = pygame.Surface((120,168))
+        turn_order = 0
+        elements_to_show = []
+        for i in range(arr_players[turn_order].len_hand()):
+            current_card = arr_players[turn_order].hand[i]
+            delta = 700 // arr_players[turn_order].len_hand()
+            current_card.rect = current_card.rect.move(300 + (delta * i), 530)
+            elements_to_show.append(current_card)
+
+        card_played = pygame.Surface((120,168))
         gameDisplay.blit(card_played, (500,275)) 
         pygame.display.update()
-        turn_order = 0
-        draw_button = pygame.draw.rect(gameDisplay,black,(700,260,150,100))
+        draw_button = button.Button(os.getcwd() + '\pictures\Draw.png', (150,100), (700, 260))
+        elements_to_show.append(draw_button)
+        '''draw_button = pygame.draw.rect(gameDisplay,black,(700,260,150,100))
         play_button = pygame.draw.rect(gameDisplay,black,(700,370,150,100))
         play_img = pygame.image.load("Play.png")
         draw_img = pygame.image.load("Draw.png")
@@ -83,17 +80,36 @@ class view:
         gameDisplay.blit(draw_img,draw_button)
         gameDisplay.blit(play_img,play_button)
         pygame.display.update()
+        '''
+        print(arr_players[turn_order])
         while len(decker.deck) != 0:
             for event in pygame.event.get():
-                if play_button.collidepoint(pygame.mouse.get_pos()):
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                '''if play_button.collidepoint(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0]:
+
                         print("Play a card from your hand")
-                elif draw_button.collidepoint(pygame.mouse.get_pos()):
+                '''
+                if draw_button.rect.collidepoint(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0]:
-                        a = self.draw_card(middleDeck,decker)
-                        arr_players[turn_order].hand.append(a)
-                        print(a)
-                print(self.draw_card(middleDeck,decker),arr_players[turn_order].name,decker.cards_left())
+                        drawn_card = arr_players[turn_order].draw(decker)
+                        print(drawn_card,arr_players[turn_order].name,decker.cards_left())
+                        arr_players.append(arr_players[turn_order])
+                        arr_players.pop(turn_order)
+
+                for i in elements_to_show:
+                    if i in arr_players[turn_order].hand:
+                        if i.rect.collidepoint(pygame.mouse.get_pos()):
+                            if pygame.mouse.get_pressed()[0]:
+                                i.play(arr_players[turn_order], arr_players, turn_order, decker)
+                                elements_to_show.remove(i)
+            gameDisplay.fill(colors.white)
+            for element in elements_to_show:
+                gameDisplay.blit(element.image, element)
+
+            pygame.display.update()
     # while len(arr_players) != 1:
     #     death,attack = loops.choice_loop(decker,cards,arr_players,turn_order)
     #     if death == None:
@@ -108,15 +124,3 @@ class view:
     #     turn_order = loops.turn_rollover(turn_order,len(arr_players))
         pygame.quit()
         quit()
-
-    def draw_card(self,middleDeck,decker):
-        gameExit = False
-        while not gameExit:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    gameExit = True
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    pygame.quit()    
-                if middleDeck.collidepoint(pygame.mouse.get_pos()):
-                    if pygame.mouse.get_pressed()[0]:
-                        return decker.draw_top()

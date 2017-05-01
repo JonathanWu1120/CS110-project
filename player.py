@@ -1,10 +1,12 @@
-import deck
-import loops
-
 class Player:
     def __init__(self,name):
         self.name = name
         self.hand = []
+
+    def __str__(self):
+        string = "This player is %s. They have %d cards in their hand. They have the following cards: \n" % \
+              (self.name, self.len_hand()) + str([i.type for i in self.hand])
+        return string
     def starting_hand(self,decker,defuse):
         self.hand.append(defuse)
         for i in range(4):
@@ -17,11 +19,12 @@ class Player:
         for i,k in enumerate(self.hand):
             print(str(i)+"-"+k.type)
     def draw(self,decker):
-        self.hand.append(decker.draw_top())
-    def play_card(self,decker,hand,pick,cards,attack,arr_players,turn_order):
+        drawn_card = self.hand.append(decker.draw_top())
+        return drawn_card
+'''
+    def play_card(self,decker,hand,pick,cards,attack,arr_players,turn_order, played_card):
         self.show_hand()
         print("Select a card")
-        played_card = loops.choose_loop(self.hand)
         if played_card.cat:
             x = 0
             for i in hand:
@@ -37,7 +40,7 @@ class Player:
                 self.hand.append(played_card)
                 return True,False
         else:
-            if played_card == card[1]:
+            if played_card == cards[1]:
                 print("Defuse can only be played after an exploding kitten")
                 self.hand.append(played_card)
                 return True,False
@@ -52,7 +55,7 @@ class Player:
             elif played_card == cards[4]:
                 if played_card.nope(arr_players,cards,turn_order):
                     return True,False
-                return played.card.favor(hand,self,arr_players,played_card)
+                return played_card.favor(hand,self,arr_players,played_card)
             elif played_card == cards[5]:
                 if played_card.nope(arr_players,cards,turn_order):
                     return True,False
@@ -65,4 +68,5 @@ class Player:
                 return pick,attack
             else:
                 pick = True
-                return pick,attack
+                '''
+                #return pick,attack

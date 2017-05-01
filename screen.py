@@ -1,4 +1,4 @@
-#import pygame
+import pygame
 
 def make_screen():
     pygame.init()
