@@ -60,15 +60,16 @@ class Card():
                     player = input("Which player would like to play the nope card?")
                     while (player < 0 or player > len(arr_players)) and player == turn_order:
                         player = int(input("Which player would like to play the nope card?"))
-                    arr_players[player].hand.remove(self)
+                    player.hand.remove(self)
                     return True
             return False
         # makes another player choose a card to give away to current player
         elif self.type == 'Favor':
             recipient = loops.phase_of_taking(arr_players, player)
-            card_taken = recipient.hand.remove(loops.give_card(recipient))
+            card_taken = recipient.hand.pop(recipient.hand.index(loops.give_card(recipient)))
             print(card_taken, "was given")
             player.hand.append(card_taken)
+            player.hand.remove(self)
             return True, False
             # allows a player to steal a card from another player
         elif self.type == 'Catermelon' or self.type == 'Hairy Potato Cat' or self.type == 'Rainbow Cat' or \
@@ -84,11 +85,13 @@ class Card():
             print("Your turn has been skipped")
             pick = False
             attack = True
+            player.hand.remove(self)
             return pick, attack
             # the player makes the next person take his turn as well, forcing them to take 2 turns
         elif self.type == 'Attack':
             attack = True
             pick = False
+            player.hand.remove(self)
             return pick, attack
             # see future draws the top three cards, prints the three cards, and puts the cards back in the correct positions
         elif self.type == 'See the Future':
@@ -102,3 +105,7 @@ class Card():
                     card = decker.draw_top(i)
                     print(card.type)
                     decker.add_card(card, i)
+            player.hand.remove(self)
+        elif self.type == 'Shuffle':
+            decker.shuffle()
+            player.hand.remove(self)

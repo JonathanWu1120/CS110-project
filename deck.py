@@ -5,6 +5,7 @@ class Deck:
     #makes an empty list for the cards to be stored in
     def __init__(self):
         self.deck = []
+
     #returns the contents of the deck
     def __str__(self):
         length = "There are %d cards in the deck right now.\n" % len(self.deck)

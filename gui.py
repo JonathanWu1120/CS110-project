@@ -6,15 +6,16 @@ import button
 class view:
     def __init__(self):
         self.working = True
+        self.gameDisplay = pygame.display.set_mode((1280, 720))
 
     def start_up(self):
         white = (255,255,255)
         black = (0,0,0)
-        display_width = 1280
-        display_height = 720
-        gameDisplay = pygame.display.set_mode((display_width,display_height))
+        #display_width = 1280
+        #display_height = 720
+        #self.gameDisplay = pygame.display.set_mode((display_width,display_height))
         pygame.display.set_caption('Exploding Kittens')
-        gameDisplay.fill(white)
+        self.gameDisplay.fill(white)
         pygame.display.update()
         ref = {}
         # img = pygame.image.load("2players.png")
@@ -22,11 +23,11 @@ class view:
         butto = pygame.Surface((350,50))
         for i in range(4):
             num_players = "button" + str(i+2)
-            button = pygame.draw.rect(gameDisplay,black,(350,50+i*150,350,75))
+            button = pygame.draw.rect(self.gameDisplay,black,(350,50+i*150,350,75))
             ref[num_players] = [button,i+2,False]
             img = pygame.image.load(str(i+2)+"players.png")
             img = pygame.transform.scale(img,(350,75))
-            gameDisplay.blit(img,button)
+            self.gameDisplay.blit(img,button)
         pygame.display.update()
         return ref
 
@@ -41,44 +42,43 @@ class view:
                         if pygame.mouse.get_pressed()[0]:
                             ref["button"+str(i)][2] = True
                             running = False
+        self.gameDisplay.fill(colors.black)
         num_players = 0
         for i,k in ref.items():
             if k[2] == True:
                 num_players = k[1]
-        pygame.quit()
-        arr = []
         return num_players
 
-    def game_phase(self,decker,arr_players,cards):
-        white = (255,255,255)
-        black = (0,0,0)
+    def game_phase(self,decker,arr_players):
         display_width = 1280
         display_height = 720
-        gameDisplay = pygame.display.set_mode((display_width,display_height))
+        self.gameDisplay = pygame.display.set_mode((display_width,display_height))
         pygame.display.set_caption('Exploding Kittens')
-        gameDisplay.fill(white)
-        middleDeck = pygame.draw.rect(gameDisplay,black,(350,275,120,168)) #deck icon
+        self.gameDisplay.fill((255, 255, 255))
         turn_order = 0
         elements_to_show = []
-        for i in range(arr_players[turn_order].len_hand()):
-            current_card = arr_players[turn_order].hand[i]
-            delta = 700 // arr_players[turn_order].len_hand()
-            current_card.rect = current_card.rect.move(300 + (delta * i), 530)
-            elements_to_show.append(current_card)
+        for player in arr_players:
+            elements_to_show.append(player)
+
+#        for i in range(arr_players[turn_order].len_hand()):
+#           current_card = arr_players[turn_order].hand[i]
+#           delta = 700 // arr_players[turn_order].len_hand()
+#           current_card.rect = current_card.rect.move(300 + (delta * i), 530)
+#           elements_to_show.append(current_card)
 
         card_played = pygame.Surface((120,168))
-        gameDisplay.blit(card_played, (500,275)) 
+        self.gameDisplay.blit(card_played, (500,275))
         pygame.display.update()
-        draw_button = button.Button(os.getcwd() + '\pictures\Draw.png', (150,100), (700, 260))
+        draw_button = button.Button(os.getcwd() + '\pictures\Draw.png', (150,100), (1000, 400))
         elements_to_show.append(draw_button)
-        '''draw_button = pygame.draw.rect(gameDisplay,black,(700,260,150,100))
-        play_button = pygame.draw.rect(gameDisplay,black,(700,370,150,100))
+        '''draw_button = pygame.draw.rect(self.gameDisplay,black,(700,260,150,100))
+        play_button = pygame.draw.rect(self.gameDisplay,black,(700,370,150,100))
         play_img = pygame.image.load("Play.png")
         draw_img = pygame.image.load("Draw.png")
         play_img = pygame.transform.scale(play_img,(150,100))
         draw_img = pygame.transform.scale(draw_img,(150,100))
-        gameDisplay.blit(draw_img,draw_button)
-        gameDisplay.blit(play_img,play_button)
+        self.gameDisplay.blit(draw_img,draw_button)
+        self.gameDisplay.blit(play_img,play_button)
         pygame.display.update()
         '''
         print(arr_players[turn_order])
@@ -96,8 +96,14 @@ class view:
                     if pygame.mouse.get_pressed()[0]:
                         drawn_card = arr_players[turn_order].draw(decker)
                         print(drawn_card,arr_players[turn_order].name,decker.cards_left())
-                        arr_players.append(arr_players[turn_order])
-                        arr_players.pop(turn_order)
+                        if drawn_card.type == 'Exploding Kitten':
+                            print('FUCK')
+                        else:
+                            for i in arr_players[turn_order].hand:
+                                if i in elements_to_show:
+                                    elements_to_show.remove(i)
+                            arr_players.append(arr_players[turn_order])
+                            arr_players.pop(turn_order)
 
                 for i in elements_to_show:
                     if i in arr_players[turn_order].hand:
@@ -105,9 +111,12 @@ class view:
                             if pygame.mouse.get_pressed()[0]:
                                 i.play(arr_players[turn_order], arr_players, turn_order, decker)
                                 elements_to_show.remove(i)
-            gameDisplay.fill(colors.white)
+            arr_players[turn_order].makeHandVisible(elements_to_show)
+            self.gameDisplay.fill(colors.white)
+            for i in arr_players:
+                pygame.draw.rect(self.gameDisplay, (0, 0, 0), i.rect)
             for element in elements_to_show:
-                gameDisplay.blit(element.image, element)
+                self.gameDisplay.blit(element.image, element)
 
             pygame.display.update()
     # while len(arr_players) != 1:
