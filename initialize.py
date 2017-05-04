@@ -39,6 +39,7 @@ def initialize():
     decker.shuffle()
     return decker, arr_players, arr, screen
 
+
 def main():
     decker,arr_players,cards,screen = initialize()
     time.sleep(3)

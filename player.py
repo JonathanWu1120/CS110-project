@@ -5,6 +5,7 @@ class Player:
     def __init__(self,name, coords, font):
         self.name = name
         self.hand = []
+        self.coords = coords
         self.rect = pygame.rect.Rect((coords[0], coords[1]), (15*len(name), 30))
         self.image = font
 
