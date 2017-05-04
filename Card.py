@@ -3,7 +3,7 @@ import os
 import pygame
 
 
-class Card():
+class Card:
     imgs = {
         "Exploding Kitten": os.getcwd() + '/cardImages/explodingkitten.JPG',
         "Defuse": os.getcwd() + '/cardImages/defuse.JPG',
@@ -73,7 +73,7 @@ class Card():
             return True, False
             # allows a player to steal a card from another player
         elif self.type == 'Catermelon' or self.type == 'Hairy Potato Cat' or self.type == 'Rainbow Cat' or \
-                        self.type == 'Taco Cat':
+                self.type == 'Taco Cat':
             recipient = loops.phase_of_taking(arr_players, player)
             card_stolen = recipient.hand.pop(loops.card_stealing(arr_players, recipient))
             print("You stole", card_stolen.type)
