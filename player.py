@@ -31,11 +31,13 @@ class Player:
 
     def draw(self, decker):
         drawn_card = decker.draw_top()
-        self.hand.append(drawn_card)
+        if drawn_card.type != 'Exploding Kitten':
+            self.hand.append(drawn_card)
         return drawn_card
 
     def makeHandVisible(self, elements_to_show):
         for card in self.hand:
+            card.image = card.front_image
             if card not in elements_to_show:
                 elements_to_show.append(card)
         i = 0
@@ -43,3 +45,24 @@ class Player:
         for card in self.hand:
             card.rect = pygame.rect.Rect((40 + (delta * i), 530), card.card_size)
             i += 1
+
+    def show_backs(self, elements_to_show):
+        for card in self.hand:
+            card.image = card.back_image
+            if card not in elements_to_show:
+                elements_to_show.append(card)
+        i = 0
+        delta = 1200 // self.len_hand()
+        for card in self.hand:
+            card.rect = pygame.rect.Rect((40 + (delta * i), 300), card.card_size)
+            i += 1
+
+    def hide_cards(self, elements_to_show):
+        for card in self.hand:
+            if card in elements_to_show:
+                elements_to_show.remove(card)
+
+    def defuse_check(self):
+        for card in self.hand:
+            if card.type == 'Defuse':
+                return True

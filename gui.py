@@ -7,7 +7,7 @@ class View:
         self.working = True
         self.gameDisplay = pygame.display.set_mode((1280, 720))
 
-    def start_up(self):
+    def choosePlayerScreen(self):
         pygame.display.set_caption('Exploding Kittens')
         self.gameDisplay.fill((255,255,255))
         pygame.display.update()
