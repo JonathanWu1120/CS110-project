@@ -295,6 +295,7 @@ def gamePhase(decker, arr_players, game_display, font):
                         elements_to_show.append(button.Button(os.getcwd() + '\pictures\\redxmark.png', (80, 80), location))
                         turn_phase = 'playing'
                         new_elements.append(message_button)
+                        elements_to_show.append(message_button)
                         update_game_display(game_display, turn_phase, arr_players, total_players,
                                             elements_to_show,
                                             turn_order)
@@ -304,6 +305,9 @@ def gamePhase(decker, arr_players, game_display, font):
                                 elements_to_show.remove(element)
                         elements_to_show.remove(selected_card)
                         selected_card.play(arr_players[turn_order], arr_players, turn_order, decker, elements_to_show)
+                        turn_marker.rect = pygame.rect.Rect(
+                            (arr_players[turn_order].coords[0], arr_players[turn_order].coords[1] + 25),
+                            turn_marker.dimensions)
                     else:
                         message = font.render('An Exploding Kitten! Will you defuse it?', 1, (0, 0, 0))
                         message_button = button.Button(None, (68, 640), (40, 300), text_surface=message)
@@ -314,10 +318,10 @@ def gamePhase(decker, arr_players, game_display, font):
                             elements_to_show.append(element)
                         start_exploding_kitten = False
                         update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show, turn_order)
-                if not arr_players[turn_order].defuse_check():
+                '''if not arr_players[turn_order].defuse_check():
                     selected_card.play(arr_players[turn_order], arr_players, turn_order, decker, elements_to_show)
                     start_exploding_kitten = True
-                    elements_to_show.remove(selected_card)
+                    elements_to_show.remove(selected_card)'''
                 if no_button.rect.collidepoint(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0]:
                         location = (arr_players[turn_order].coords[0] + 5, arr_players[turn_order].coords[1] - 20)
@@ -328,6 +332,9 @@ def gamePhase(decker, arr_players, game_display, font):
                         for element in new_elements:
                             elements_to_show.remove(element)
                         elements_to_show.remove(selected_card)
+                        turn_marker.rect = pygame.rect.Rect(
+                            (arr_players[turn_order].coords[0], arr_players[turn_order].coords[1] + 25),
+                            turn_marker.dimensions)
                         start_exploding_kitten = True
                         update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show,
                                             turn_order)
@@ -413,6 +420,8 @@ def gamePhase(decker, arr_players, game_display, font):
                             if pygame.mouse.get_pressed()[0]:
                                 turn_phase = 'playing'
                                 nope_pass = True
+                                first_nope_instance = True
+                                deciding_to_play_nope = True
                                 for thing in new_elements:
                                     if thing in elements_to_show:
                                         elements_to_show.remove(thing)
