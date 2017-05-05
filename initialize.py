@@ -198,7 +198,7 @@ def gamePhase(decker, arr_players, game_display, font):
                         else:
                             arr_players[turn_order].hide_cards(elements_to_show)
                             update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show, turn_order, override=True)
-                            #time.sleep(3)
+                            time.sleep(3)
                             advance_turn(arr_players, turn_order, turn_marker, elements_to_show, attack)
                             if attack:
                                 attack = False
@@ -238,11 +238,13 @@ def gamePhase(decker, arr_players, game_display, font):
                                         selected_card = i
                                         i.play(arr_players[turn_order], arr_players, turn_order, decker,
                                                elements_to_show)
-                                        advance_turn(arr_players, turn_order, turn_marker, elements_to_show, False)
+                                        advance_turn(arr_players, turn_order, turn_marker, elements_to_show, attack)
+                                        attack = False
                                     elif i.type == 'Attack':
                                         i.play(arr_players[turn_order], arr_players, turn_order, decker,
                                                elements_to_show)
-                                        advance_turn(arr_players, turn_order, turn_marker, elements_to_show, True)
+                                        advance_turn(arr_players, turn_order, turn_marker, elements_to_show, attack)
+                                        attack = True
                                     elif i.type == 'Defuse' or i.type == 'Nope':
                                         pass
                                     else:
@@ -308,10 +310,10 @@ def gamePhase(decker, arr_players, game_display, font):
                         yes_button = button.Button(os.getcwd() + '\pictures\greencheckmark.png', (80, 80), (40, 372))
                         no_button = button.Button(os.getcwd() + '\pictures\\redxmark.png', (80, 80), (140, 372))
                         new_elements = [message_button, yes_button, no_button]
-                    for element in new_elements:
-                        elements_to_show.append(element)
-                    start_exploding_kitten = False
-                update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show, turn_order)
+                        for element in new_elements:
+                            elements_to_show.append(element)
+                        start_exploding_kitten = False
+                        update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show, turn_order)
                 if not arr_players[turn_order].defuse_check():
                     selected_card.play(arr_players[turn_order], arr_players, turn_order, decker, elements_to_show)
                     start_exploding_kitten = True
@@ -327,6 +329,8 @@ def gamePhase(decker, arr_players, game_display, font):
                             elements_to_show.remove(element)
                         elements_to_show.remove(selected_card)
                         start_exploding_kitten = True
+                        update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show,
+                                            turn_order)
                 elif yes_button.rect.collidepoint(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0]:
                         for card in arr_players[turn_order].hand:
@@ -372,6 +376,9 @@ def gamePhase(decker, arr_players, game_display, font):
                             message = font.render('Click the player who will play the nope!', 1, (0, 0, 0))
                             message_button = button.Button(None, (68, 640), (400, 300), text_surface=message)
                             new_elements.append(message_button)
+                            elements_to_show.append(message_button)
+                            update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show,
+                                                turn_order)
                     if no_button.rect.collidepoint(pygame.mouse.get_pos()):
                         if pygame.mouse.get_pressed()[0]:
                             turn_phase = 'playing'
@@ -379,6 +386,8 @@ def gamePhase(decker, arr_players, game_display, font):
                             first_nope_instance = True
                             for element in new_elements:
                                 elements_to_show.remove(element)
+                            update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show,
+                                                turn_order)
                 else:
                     for element in elements_to_show:
                         if element in arr_players:
