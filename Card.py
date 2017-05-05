@@ -20,15 +20,8 @@ class Card:
     }
     card_size = (120, 168)
 
-    # to make a card you must type Card("Name of Card")
-    def check_cat(self, string):
-        if "Cat" in string:
-            return True
-        return False
-
     def __init__(self, string, coords=(0,0)):
         self.type = string
-        self.cat = self.check_cat(self.type)
         self.front_image = pygame.transform.scale(pygame.image.load(self.imgs[self.type]), self.card_size).convert_alpha()
         self.image = self.front_image
         self.back_image = pygame.transform.scale(pygame.image.load(os.getcwd() + '/cardImages/deck.JPG'),
@@ -39,49 +32,31 @@ class Card:
         return self.type
 
     def play(self, player, arr_players, turn_order, decker, elements_to_show, chosen_player=None, chosen_card=None, exploding_kitten_index=0):
-        # negates any action, except a defuse
-        if self.type == 'Nope':
-            count = 0
-            for i, k in enumerate(arr_players):
-                if i != turn_order:
-                    for i, k in enumerate(k.hand):
-                        if k.type == 'Nope':
-                            count += 1
-            if count > 0:
-                print("A nope card can be played")
-                decision = input("Would a player like to play a nope card? (y/n)")
-                while decision != "y" and decision != "n":
-                    decision = input("Would a player like to play a nope card? (y/n) ")
-                if decision == "n":
-                    return False
-                elif decision == 'y':
-                    for i, k in enumerate(arr_players):
-                        print(str(i) + "-" + k.name)
-                    player = input("Which player would like to play the nope card?")
-                    while (player < 0 or player > len(arr_players)) and player == turn_order:
-                        player = int(input("Which player would like to play the nope card?"))
-                    player.hand.remove(self)
-                    elements_to_show.remove(self)
-                    return True
-            return False
         # makes another player choose a card to give away to current player
-        elif self.type == 'Favor':
+        if self.type == 'Favor':
             chosen_player.hand.remove(chosen_card)
             print(chosen_card, "was given")
             player.hand.append(chosen_card)
             player.hand.remove(self)
-            elements_to_show.remove(self)
-            return True, False
+        elif self.type == 'Nope':
+            player.hand.remove(self)
+            chosen_player.hand.remove(chosen_card)
             # allows a player to steal a card from another player
         elif 'Cat' in self.type:
             print("You stole", chosen_card.type)
+            card_type = self.type
             chosen_player.hand.remove(chosen_card)
             player.hand.remove(self)
+            elements_to_show.remove(self)
+            for card in player.hand:
+                if card.type == card_type:
+                    player.hand.remove(card)
+                    elements_to_show.remove(card)
+                    break
             player.hand.append(chosen_card)
             return True, False
         elif self.type == 'Skip':
             # makes the player skip a turn
-            print("Your turn has been skipped")
             player.hand.remove(self)
             elements_to_show.remove(self)
             # the player makes the next person take his turn as well, forcing them to take 2 turns
@@ -115,7 +90,10 @@ class Card:
             elements_to_show.remove(self)
         elif self.type == 'Exploding Kitten':
             arr_players.pop(turn_order)
+            for card in player.hand:
+                elements_to_show.remove(card)
         elif self.type == 'Defuse':
             decker.deck.insert(exploding_kitten_index, chosen_card)
             player.hand.remove(self)
             elements_to_show.remove(self)
+            elements_to_show.remove(chosen_card)

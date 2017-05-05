@@ -40,11 +40,14 @@ class Player:
             card.image = card.front_image
             if card not in elements_to_show:
                 elements_to_show.append(card)
-        i = 0
-        delta = 1200 // self.len_hand()
-        for card in self.hand:
-            card.rect = pygame.rect.Rect((40 + (delta * i), 530), card.card_size)
-            i += 1
+        if len(self.hand) == 0:
+            return
+        else:
+            i = 0
+            delta = 1200 // self.len_hand()
+            for card in self.hand:
+                card.rect = pygame.rect.Rect((40 + (delta * i), 530), card.card_size)
+                i += 1
 
     def show_backs(self, elements_to_show):
         for card in self.hand:

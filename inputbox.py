@@ -17,28 +17,24 @@ def get_key():
             pass
 
 
-def display_box(screen, message):
-    "Print a message in a box in the middle of the screen"
+def display_box(screen, message, length, x, y):
+    "Print a message in a box on the screen"
     fontobject = pygame.font.Font(None, 32)
     pygame.draw.rect(screen, (0, 0, 0),
-                     ((screen.get_width() / 2) - (32 * 8),
-                      (screen.get_height() / 2) - 16,
-                      (32 * 16), 32), 0)
+                     (x, y, length, 32), 0)
     pygame.draw.rect(screen, (255, 255, 255),
-                     ((screen.get_width() / 2) - (32 * 8),
-                      (screen.get_height() / 2) - 18,
-                      (32 * 16 + 4), 32), 1)
+                     (x, y, length, 32), 1)
     if len(message) != 0:
-        screen.blit(fontobject.render(message, 1, (255, 255, 255)),
-                    ((screen.get_width() / 2) - (32 * 8), (screen.get_height() / 2) - 15))
+        screen.blit(fontobject.render(message, 1, (255, 255, 255)), (x, y))
     pygame.display.flip()
 
 
-def ask(screen, question):
+def ask(screen, question, x, y):
     #ask(screen, question) -> answer
     pygame.font.init()
     current_string = []
-    display_box(screen, question + ''.join(current_string))
+    length = len(question) * 16
+    display_box(screen, question + ''.join(current_string), length, x, y)
     while 1:
         inkey = get_key()
         if inkey == K_BACKSPACE:
@@ -47,5 +43,5 @@ def ask(screen, question):
             break
         else:
             current_string.append(inkey)
-        display_box(screen, question + ''.join(current_string))
+        display_box(screen, question + ''.join(current_string), length, x, y)
     return ''.join(current_string)
