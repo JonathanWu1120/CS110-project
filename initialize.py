@@ -88,10 +88,9 @@ def advance_turn(arr_players, turn_order, turn_marker, elements_to_show, attack)
             turn_marker.dimensions)
 
 
-
 def nope_check(arr_players):
-    for player in arr_players:
-        for card in player.hand:
+    for players in arr_players:
+        for card in players.hand:
             if card.type == 'Nope':
                 return True
 
@@ -199,7 +198,7 @@ def gamePhase(decker, arr_players, game_display, font):
                         else:
                             arr_players[turn_order].hide_cards(elements_to_show)
                             update_game_display(game_display, turn_phase, arr_players, total_players, elements_to_show, turn_order, override=True)
-                            time.sleep(3)
+                            #time.sleep(3)
                             advance_turn(arr_players, turn_order, turn_marker, elements_to_show, attack)
                             if attack:
                                 attack = False
@@ -226,6 +225,9 @@ def gamePhase(decker, arr_players, game_display, font):
                                     elif i.type == 'See the Future':
                                         seen_cards = i.play(arr_players[turn_order], arr_players, turn_order, decker,
                                                             elements_to_show)
+                                        for card in seen_cards:
+                                            if card not in elements_to_show:
+                                                elements_to_show.append(card)
                                         update_game_display(game_display, turn_phase, arr_players, total_players,
                                                             elements_to_show,
                                                             turn_order)
@@ -236,17 +238,17 @@ def gamePhase(decker, arr_players, game_display, font):
                                         selected_card = i
                                         i.play(arr_players[turn_order], arr_players, turn_order, decker,
                                                elements_to_show)
-                                        advance_turn(arr_players, turn_order, turn_marker, elements_to_show, attack)
+                                        advance_turn(arr_players, turn_order, turn_marker, elements_to_show, False)
                                     elif i.type == 'Attack':
                                         i.play(arr_players[turn_order], arr_players, turn_order, decker,
                                                elements_to_show)
-                                        advance_turn(arr_players, turn_order, turn_marker, elements_to_show, attack)
-                                        attack = True
+                                        advance_turn(arr_players, turn_order, turn_marker, elements_to_show, True)
                                     elif i.type == 'Defuse' or i.type == 'Nope':
                                         pass
                                     else:
                                         i.play(arr_players[turn_order], arr_players, turn_order, decker,
                                                elements_to_show)
+                                    nope_pass = False
             elif turn_phase == 'favor' or turn_phase == 'cat':
                 for element in elements_to_show:
                     if not player_selected:
@@ -287,15 +289,19 @@ def gamePhase(decker, arr_players, game_display, font):
                     if not arr_players[turn_order].defuse_check():
                         message = font.render('An Exploding Kitten! You can\'t defuse it!', 1, (0, 0, 0))
                         message_button = button.Button(None, (68, 640), (40, 300), text_surface=message)
-                        time.sleep(5)
                         location = (arr_players[turn_order].coords[0] + 5, arr_players[turn_order].coords[1] - 20)
-                        elements_to_show.append(
-                            button.Button(os.getcwd() + '\pictures\\redxmark.png', (80, 80), location))
-                        selected_card.play(arr_players[turn_order], arr_players, turn_order, decker, elements_to_show)
+                        elements_to_show.append(button.Button(os.getcwd() + '\pictures\\redxmark.png', (80, 80), location))
                         turn_phase = 'playing'
+                        new_elements.append(message_button)
+                        update_game_display(game_display, turn_phase, arr_players, total_players,
+                                            elements_to_show,
+                                            turn_order)
+                        time.sleep(3)
                         for element in new_elements:
-                            elements_to_show.remove(element)
+                            if element in elements_to_show:
+                                elements_to_show.remove(element)
                         elements_to_show.remove(selected_card)
+                        selected_card.play(arr_players[turn_order], arr_players, turn_order, decker, elements_to_show)
                     else:
                         message = font.render('An Exploding Kitten! Will you defuse it?', 1, (0, 0, 0))
                         message_button = button.Button(None, (68, 640), (40, 300), text_surface=message)
@@ -363,14 +369,14 @@ def gamePhase(decker, arr_players, game_display, font):
                             deciding_to_play_nope = False
                             elements_to_show.remove(message_button)
                             elements_to_show.remove(yes_button)
-                            message = font.render('Click the player who will play the nope!', 1,
-                                                  (0, 0, 0))
+                            message = font.render('Click the player who will play the nope!', 1, (0, 0, 0))
                             message_button = button.Button(None, (68, 640), (400, 300), text_surface=message)
                             new_elements.append(message_button)
                     if no_button.rect.collidepoint(pygame.mouse.get_pos()):
                         if pygame.mouse.get_pressed()[0]:
                             turn_phase = 'playing'
-                            nope_pass = False
+                            nope_pass = True
+                            first_nope_instance = True
                             for element in new_elements:
                                 elements_to_show.remove(element)
                 else:
